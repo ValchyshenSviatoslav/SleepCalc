@@ -1,15 +1,26 @@
 from datetime import datetime, timedelta
 
 class SleepCalculator:
-    def __init__(self, cycle_length=90):
-        self.cycle_length = cycle_length  # хвилини
-
     def calculate_by_sleep(self, sleep_time_str):
-        sleep_time = datetime.strptime(sleep_time_str, "%H:%M")
-        return [(sleep_time + timedelta(minutes=self.cycle_length * i)).strftime("%H:%M")
-                for i in range(1, 7)]
+        try:
+            sleep_time = datetime.strptime(sleep_time_str, "%H:%M")
+        except ValueError:
+            return ["Помилка: введіть час у форматі ГГ:ХХ"]
+
+        cycles = []
+        for i in range(1, 7):
+            wake_time = sleep_time + timedelta(minutes=90 * i)
+            cycles.append(wake_time.strftime("%H:%M"))
+        return cycles
 
     def calculate_by_wake(self, wake_time_str):
-        wake_time = datetime.strptime(wake_time_str, "%H:%M")
-        return [(wake_time - timedelta(minutes=self.cycle_length * i)).strftime("%H:%M")
-                for i in reversed(range(1, 7))]
+        try:
+            wake_time = datetime.strptime(wake_time_str, "%H:%M")
+        except ValueError:
+            return ["Помилка: введіть час у форматі ГГ:ХХ"]
+
+        cycles = []
+        for i in range(6, 0, -1):
+            sleep_time = wake_time - timedelta(minutes=90 * i)
+            cycles.append(sleep_time.strftime("%H:%M"))
+        return cycles
